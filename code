@@ -1,0 +1,32 @@
+import random as rd
+
+largeur = 30
+longueur = 30
+terrain = [[0]*largeur]*longueur
+
+N_proies = 10
+F_proies = 2
+A_proies = 7
+
+def occupation(i, j):
+    if terrain[j[i]]==0:
+        return True
+    else:
+        return False
+
+def initialisation():
+    taille = largeur*longueur
+    freq = N_proies/taille
+    assert freq <= 1, "trop de proies"
+
+    for i in range(largeur):
+        for j in range(longueur):
+            if N_proies==0:
+                return terrain
+                
+            if occupation(i, j) == True:
+                break
+            else:
+                terrain[j[i]]=rd.random(freq)
+                N_proies-=1
+                freq=N_proies/taille
