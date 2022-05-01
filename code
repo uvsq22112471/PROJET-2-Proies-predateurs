@@ -1,32 +1,114 @@
+from calendar import c
 import random as rd
+import tkinter as tk
 
-largeur = 30
-longueur = 30
-terrain = [[0]*largeur]*longueur
+#Paramètres
+longueur = 5
+largeur = 2
+Npro = 3
 
-N_proies = 10
-F_proies = 2
-A_proies = 7
+#Initialisation - Création de la sturture de données (matrice)
 
-def occupation(i, j):
-    if terrain[j[i]]==0:
-        return True
-    else:
-        return False
+"""terrain :
+0 : indice
 
-def initialisation():
-    taille = largeur*longueur
-    freq = N_proies/taille
-    assert freq <= 1, "trop de proies"
+1ere caracteristique :
+0 : libre
+1 : proie
+2 : predateur
+3 : arbre/lac
 
-    for i in range(largeur):
-        for j in range(longueur):
-            if N_proies==0:
-                return terrain
-                
-            if occupation(i, j) == True:
-                break
-            else:
-                terrain[j[i]]=rd.random(freq)
-                N_proies-=1
-                freq=N_proies/taille
+2eme caracteristique : age
+"""
+
+terrain = []
+for ligne in range(longueur+2):
+    for colonne in range(largeur+2):
+        if ligne == 0 or ligne == longueur+1 or colonne == 0 or colonne == largeur+1:
+            terrain.append([ligne*(largeur+2)+colonne, 3, 0])
+        else:
+            terrain.append([ligne*(largeur+2)+colonne, 0, 0])
+
+nb_cases_occupees = 0
+nb_cases_libres = longueur*largeur
+
+def naissance_proies(terrain, N):
+    """permet la génération spontanée des proies"""
+    global nb_cases_libres, nb_cases_occupees
+    terrain_libre = []
+    for i in range((longueur+2)*(largeur+2)):
+        if terrain[i][1] == 0:
+            terrain_libre.append(terrain[i])
+    assert(len(terrain_libre)>=N)
+    nouveaux = rd.sample(terrain_libre, N)
+    for i in range(N):
+        indice = nouveaux[i][0]
+        terrain[indice][1] = 1
+        terrain[indice][2] = rd.randint(2, 10)
+        nb_cases_libres -= 1
+        nb_cases_occupees += 1
+    return terrain
+
+def generation_proies(Npro, terrain):
+    """generation spontanee des proies au début de la simulation"""
+    naissance_proies(terrain, Npro)
+
+def etape(terrain, Fpro):
+    """passe d'un etat n a l'etat n+1. Definit les regles de vie"""
+    naissance_proies(terrain, Fpro)
+    for indice in range(longueur*largeur): #indice = (indice//longueur)*largeur + indice%largeur
+        #age
+        if terrain[indice][2] != 0:
+            terrain[indice][2] -= 1
+            if terrain[indice][2] == 0:
+                terrain[indice][1] == 0
+        #deplacement
+        environnement = []
+        # 0 1 2
+        # 7 # 3
+        # 6 5 4
+        if terrain[(indice//longueur-1)*largeur + indice%largeur-1] == 0:
+            environnement.append(0)
+        if terrain[(indice//longueur-1)*largeur + indice%largeur] == 0:
+            environnement.append(1)
+        if terrain[(indice//longueur-1)*largeur + indice%largeur+1] == 0:
+            environnement.append(2)
+        if terrain[(indice//longueur)*largeur + indice%largeur+1] == 0:
+            environnement.append(3)
+        if terrain[(indice//longueur+1)*largeur + indice%largeur+1] == 0:
+            environnement.append(4)
+        if terrain[(indice//longueur+1)*largeur + indice%largeur] == 0:
+            environnement.append(5)
+        if terrain[(indice//longueur+1)*largeur + indice%largeur-1] == 0:
+            environnement.append(6)
+        if terrain[(indice//longueur)*largeur + indice%largeur-1] == 0:
+            environnement.append(7)
+        
+        if environnement != []:
+            move = rd.sample(environnement, 1)
+            if move == 0:
+                terrain[(indice//longueur-1)*largeur + indice%largeur-1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur-1)*largeur + indice%largeur-1]
+            if move == 1:
+                terrain[(indice//longueur-1)*largeur + indice%largeur], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur-1)*largeur + indice%largeur]
+            if move == 2:
+                terrain[(indice//longueur-1)*largeur + indice%largeur+1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur-1)*largeur + indice%largeur+1]
+            if move == 3:
+                terrain[(indice//longueur)*largeur + indice%largeur+1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur)*largeur + indice%largeur+1]
+            if move == 4:
+                terrain[(indice//longueur+1)*largeur + indice%largeur+1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur+1)*largeur + indice%largeur+1]
+            if move == 5:
+                terrain[(indice//longueur+1)*largeur + indice%largeur], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur+1)*largeur + indice%largeur]
+            if move == 6:
+                terrain[(indice//longueur+1)*largeur + indice%largeur-1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur+1)*largeur + indice%largeur-1]
+            if move == 7:
+                terrain[(indice//longueur)*largeur + indice%largeur-1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur)*largeur + indice%largeur-1]
+    return terrain
+
+
+generation_proies(Npro, terrain)
+print(terrain)
+etape(terrain, 1)
+print(terrain)
+etape(terrain,2)
+print(terrain)
+
