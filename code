@@ -1,4 +1,3 @@
-from calendar import c
 import random as rd
 import tkinter as tk
 
@@ -28,6 +27,7 @@ for ligne in range(longueur+2):
             terrain.append([ligne*(largeur+2)+colonne, 3, 0])
         else:
             terrain.append([ligne*(largeur+2)+colonne, 0, 0])
+nouveau_terrain = terrain.copy()
 
 nb_cases_occupees = 0
 nb_cases_libres = longueur*largeur
@@ -43,72 +43,259 @@ def naissance_proies(terrain, N):
     nouveaux = rd.sample(terrain_libre, N)
     for i in range(N):
         indice = nouveaux[i][0]
-        terrain[indice][1] = 1
-        terrain[indice][2] = rd.randint(2, 10)
+        nouveau_terrain[indice][1] = 1
+        nouveau_terrain[indice][2] = rd.randint(2, 10)
         nb_cases_libres -= 1
         nb_cases_occupees += 1
-    return terrain
+    return nouveau_terrain
 
 def generation_proies(Npro, terrain):
     """generation spontanee des proies au début de la simulation"""
     naissance_proies(terrain, Npro)
 
-def etape(terrain, Fpro):
-    """passe d'un etat n a l'etat n+1. Definit les regles de vie"""
-    naissance_proies(terrain, Fpro)
-    for indice in range(longueur*largeur): #indice = (indice//longueur)*largeur + indice%largeur
-        #age
-        if terrain[indice][2] != 0:
-            terrain[indice][2] -= 1
-            if terrain[indice][2] == 0:
-                terrain[indice][1] == 0
-        #deplacement
-        environnement = []
-        # 0 1 2
-        # 7 # 3
-        # 6 5 4
-        if terrain[(indice//longueur-1)*largeur + indice%largeur-1] == 0:
-            environnement.append(0)
-        if terrain[(indice//longueur-1)*largeur + indice%largeur] == 0:
-            environnement.append(1)
-        if terrain[(indice//longueur-1)*largeur + indice%largeur+1] == 0:
-            environnement.append(2)
-        if terrain[(indice//longueur)*largeur + indice%largeur+1] == 0:
-            environnement.append(3)
-        if terrain[(indice//longueur+1)*largeur + indice%largeur+1] == 0:
-            environnement.append(4)
-        if terrain[(indice//longueur+1)*largeur + indice%largeur] == 0:
-            environnement.append(5)
-        if terrain[(indice//longueur+1)*largeur + indice%largeur-1] == 0:
-            environnement.append(6)
-        if terrain[(indice//longueur)*largeur + indice%largeur-1] == 0:
-            environnement.append(7)
-        
-        if environnement != []:
-            move = rd.sample(environnement, 1)
-            if move == 0:
-                terrain[(indice//longueur-1)*largeur + indice%largeur-1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur-1)*largeur + indice%largeur-1]
-            if move == 1:
-                terrain[(indice//longueur-1)*largeur + indice%largeur], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur-1)*largeur + indice%largeur]
-            if move == 2:
-                terrain[(indice//longueur-1)*largeur + indice%largeur+1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur-1)*largeur + indice%largeur+1]
-            if move == 3:
-                terrain[(indice//longueur)*largeur + indice%largeur+1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur)*largeur + indice%largeur+1]
-            if move == 4:
-                terrain[(indice//longueur+1)*largeur + indice%largeur+1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur+1)*largeur + indice%largeur+1]
-            if move == 5:
-                terrain[(indice//longueur+1)*largeur + indice%largeur], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur+1)*largeur + indice%largeur]
-            if move == 6:
-                terrain[(indice//longueur+1)*largeur + indice%largeur-1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur+1)*largeur + indice%largeur-1]
-            if move == 7:
-                terrain[(indice//longueur)*largeur + indice%largeur-1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur)*largeur + indice%largeur-1]
-    return terrain
+def temps(indice):
+    if nouveau_terrain[indice][2] != 0:
+        nouveau_terrain[indice][2] -= 1
+        if nouveau_terrain[indice][2] == 0:
+            nouveau_terrain[indice][1] == 0
 
+def mouvement(indice):
+    #deplacement
+    environnement = []
+# 0 1 2
+# 7 # 3
+# 6 5 4
+    if terrain[(indice//longueur-1)*largeur + indice%largeur-1][1] == 0:
+        environnement.append(0)
+    if terrain[(indice//longueur-1)*largeur + indice%largeur][1] == 0:
+        environnement.append(1)
+    if terrain[(indice//longueur-1)*largeur + indice%largeur+1][1] == 0:
+        environnement.append(2)
+    if terrain[(indice//longueur)*largeur + indice%largeur+1][1] == 0:
+        environnement.append(3)
+    if terrain[(indice//longueur+1)*largeur + indice%largeur+1][1] == 0:
+        environnement.append(4)
+    if terrain[(indice//longueur+1)*largeur + indice%largeur][1] == 0:
+        environnement.append(5)
+    if terrain[(indice//longueur+1)*largeur + indice%largeur-1][1] == 0:
+        environnement.append(6)
+    if terrain[(indice//longueur)*largeur + indice%largeur-1][1] == 0:
+        environnement.append(7)
+        
+    if environnement != []:
+        move = rd.sample(environnement, 1)
+        if move == 0:
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur-1], nouveau_terrain[(indice//longueur)*largeur + indice%largeur] = nouveau_terrain[(indice//longueur)*largeur + indice%largeur], nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur-1]
+        if move == 1:
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur], nouveau_terrain[(indice//longueur)*largeur + indice%largeur] = nouveau_terrain[(indice//longueur)*largeur + indice%largeur], nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur]
+        if move == 2:
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur+1], nouveau_terrain[(indice//longueur)*largeur + indice%largeur] = nouveau_terrain[(indice//longueur)*largeur + indice%largeur], nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur+1]
+        if move == 3:
+            nouveau_terrain[(indice//longueur)*largeur + indice%largeur+1], nouveau_terrain[(indice//longueur)*largeur + indice%largeur] = nouveau_terrain[(indice//longueur)*largeur + indice%largeur], nouveau_terrain[(indice//longueur)*largeur + indice%largeur+1]
+        if move == 4:
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur+1], nouveau_terrain[(indice//longueur)*largeur + indice%largeur] = nouveau_terrain[(indice//longueur)*largeur + indice%largeur], nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur+1]
+        if move == 5:
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur], nouveau_terrain[(indice//longueur)*largeur + indice%largeur] = nouveau_terrain[(indice//longueur)*largeur + indice%largeur], nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur]
+        if move == 6:
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur-1], nouveau_terrain[(indice//longueur)*largeur + indice%largeur] = nouveau_terrain[(indice//longueur)*largeur + indice%largeur], nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur-1]
+        if move == 7:
+            nouveau_terrain[(indice//longueur)*largeur + indice%largeur-1], terrain[(indice//longueur)*largeur + indice%largeur] = terrain[(indice//longueur)*largeur + indice%largeur], terrain[(indice//longueur)*largeur + indice%largeur-1]
+    return nouveau_terrain
+
+
+
+
+def reproduction(indice):
+    partenaires_potentiels = []
+    if terrain[(indice//longueur-1)*largeur + indice%largeur][1] == 1:
+        partenaires_potentiels.append(1)
+    if terrain[(indice//longueur)*largeur + indice%largeur+1][1] == 1:
+        partenaires_potentiels.append(3)
+    if terrain[(indice//longueur+1)*largeur + indice%largeur][1] == 1:
+        partenaires_potentiels.append(5)
+    if terrain[(indice//longueur)*largeur + indice%largeur-1][1] == 1:
+        partenaires_potentiels.append(7)
+
+    if partenaires_potentiels == []:
+        return terrain
+    partenaire = rd.sample(partenaires_potentiels, 1)
+    
+    # A B C D
+    # E F G H
+    # I J K L
+    # M N O P
+
+    if partenaire == 1:
+        position_possible_enfant = []
+        # A B C
+        # E b G
+        # I a K
+        # M N O
+        if terrain[(indice//longueur-2)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("A")
+        if terrain[(indice//longueur-2)*largeur + indice%largeur][1] == 0:
+            position_possible_enfant.append("B")
+        if terrain[(indice//longueur-2)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("C")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("G")
+        if terrain[(indice//longueur)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("K")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("O")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur][1] == 0:
+            position_possible_enfant.append("N")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("M")
+        if terrain[(indice//longueur)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("I")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("E")
+    
+    elif partenaire == 3:
+        position_possible_enfant = []
+        # 0 1 2 3
+        # 9 a b 4
+        # 8 7 6 5
+        if terrain[(indice//longueur-1)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("A")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur][1] == 0:
+            position_possible_enfant.append("B")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("C")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur+2][1] == 0:
+            position_possible_enfant.append("D")
+        if terrain[(indice//longueur)*largeur + indice%largeur+2][1] == 0:
+            position_possible_enfant.append("H")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur+2][1] == 0:
+            position_possible_enfant.append("L")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("K")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur][1] == 0:
+            position_possible_enfant.append("J")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("I")
+        if terrain[(indice//longueur)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("E")
+    
+    elif partenaire == 5:
+        position_possible_enfant = []
+        # 0 1 2
+        # 9 a 3
+        # 8 b 4
+        # 7 6 5
+        if terrain[(indice//longueur-1)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("A")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur][1] == 0:
+            position_possible_enfant.append("B")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("C")
+        if terrain[(indice//longueur)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("G")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("K")
+        if terrain[(indice//longueur+2)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("O")
+        if terrain[(indice//longueur+2)*largeur + indice%largeur][1] == 0:
+            position_possible_enfant.append("N")
+        if terrain[(indice//longueur+2)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("M")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("I")
+        if terrain[(indice//longueur)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("E")
+
+    if partenaire == 7:
+        position_possible_enfant = []
+        # 0 1 2 3
+        # 9 b a 4
+        # 8 7 6 5
+        if terrain[(indice//longueur-1)*largeur + indice%largeur-2][1] == 0:
+            position_possible_enfant.append("A")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("B")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur][1] == 0:
+            position_possible_enfant.append("C")
+        if terrain[(indice//longueur-1)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("D")
+        if terrain[(indice//longueur)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("H")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur+1][1] == 0:
+            position_possible_enfant.append("L")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur][1] == 0:
+            position_possible_enfant.append("K")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur-1][1] == 0:
+            position_possible_enfant.append("J")
+        if terrain[(indice//longueur+1)*largeur + indice%largeur-2][1] == 0:
+            position_possible_enfant.append("I")
+        if terrain[(indice//longueur)*largeur + indice%largeur-2][1] == 0:
+            position_possible_enfant.append("E")
+
+        if position_possible_enfant != []:
+            position_enfant = rd.sample(position_possible_enfant, 1)
+        if position_enfant == "A":
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur-2][1] = 1
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur-2][2] = rd.randint(2, 10)
+        if position_enfant == "B":
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur-1][1] = 1
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur-1][2] = rd.randint(2,10)
+        if position_enfant == "C":
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur][1] = 1
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur][2] = rd.randint(2,10)
+        if position_enfant == "D":
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur+1][1] = 1
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur+1][2] = rd.randint(2, 10)
+        if position_enfant == "E":
+            nouveau_terrain[(indice//longueur)*largeur + indice%largeur-2][1] = 1
+            nouveau_terrain[(indice//longueur)*largeur + indice%largeur-2][2] = rd.randint(2, 10)
+        if position_enfant == "G":
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur+1][1] = 1
+            nouveau_terrain[(indice//longueur-1)*largeur + indice%largeur+1][2] = rd.randint(2,10)
+        if position_enfant == "H":
+            nouveau_terrain[(indice//longueur)*largeur + indice%largeur+1][1] = 1
+            nouveau_terrain[(indice//longueur)*largeur + indice%largeur+1][2] = rd.randint(2, 10)
+        if position_enfant == "I":
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur-2][1] = 1
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur-2][2] = rd.randint(2, 10)
+        if position_enfant == "J":
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur-1][1] = 1
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur-1][2] = rd.randint(2, 10)
+        if position_enfant == "K":
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur][1] = 1
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur][2] =rd.randint(2, 10)
+        if position_enfant == "L":
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur+1][1] = 1
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur+1][2] = rd.randint(2,10)
+        if position_enfant == "M":
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur-1][1] = 1
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur-1][2] = rd.randint(2, 10)
+        if position_enfant == "N":
+            nouveau_terrain[(indice//longueur+2)*largeur + indice%largeur][1] = 1
+            nouveau_terrain[(indice//longueur+2)*largeur + indice%largeur][2] = rd.randint(2, 10)
+        if position_enfant == "O":
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur+1][1] = 1
+            nouveau_terrain[(indice//longueur+1)*largeur + indice%largeur+1][2] = rd.randint(2, 10)
+
+    return nouveau_terrain
+
+def etape():
+    """passe d'un etat n a l'etat n+1. Definit les regles de vie"""
+    for indice in range(longueur*largeur): 
+        reproduction(indice)
+        temps(indice)
+        mouvement(indice)
+    return nouveau_terrain
 
 generation_proies(Npro, terrain)
 print(terrain)
-etape(terrain, 1)
+etape()
 print(terrain)
-etape(terrain,2)
+etape()
 print(terrain)
 
+# racine = tk.Tk()
+# racine.title("Proies et prédateurs")
+# canvas = tk.Canvas(racine, width=longueur, height=largeur)
+# bouton_start = tk.Button(racine, text="Start", command=lambda: generation_proies())
+
+# racine.mainloop()
