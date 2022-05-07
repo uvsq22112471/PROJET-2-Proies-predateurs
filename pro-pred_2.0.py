@@ -4,10 +4,10 @@ import numpy as np
 
 #Parametres
 
-longueur = 3
+longueur = 5
 largeur = 5
-Npro = 2
-Npred = 1
+Npro = 5
+Npred = 2
 
 
 #Etape 1
@@ -62,6 +62,13 @@ naissances(Npro, Npred)
 print(nouveau_terrain)
 
 def deplacement(ligne, colonne):
+    #vieillissement
+    
+    nouveau_terrain[1, ligne, colonne] -= 1
+    if nouveau_terrain[1, ligne, colonne] == 0:
+        nouveau_terrain[0, ligne, colonne] == 0
+    
+    #deplacement
     # 0 1 2
     # 7   3
     # 6 5 4
@@ -83,7 +90,7 @@ def deplacement(ligne, colonne):
     if terrain[0,ligne,colonne-1] == 0 and nouveau_terrain[0,ligne,colonne-1] == 0:
         cases_adjacentes_dispo.append(7)
     if cases_adjacentes_dispo != []:
-        nouvelle_case = rd.sample(cases_adjacentes_dispo, 1)
+        nouvelle_case = cases_adjacentes_dispo[rd.randint(0, len(cases_adjacentes_dispo)-1)]
         if nouvelle_case == 0:
             nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
             nouveau_terrain[1, ligne-1, colonne-1] = nouveau_terrain[1, ligne, colonne]
@@ -128,17 +135,21 @@ def deplacement(ligne, colonne):
 
 
 def etape(Fpro, Fpred):
+    global terrain, nouveau_terrain
+    terrain = nouveau_terrain
+    nouveau_terrain = terrain.copy()
     naissances(Fpro, Fpred)
+    terrain = nouveau_terrain
+    nouveau_terrain = terrain.copy()
     for ligne in range(longueur+2):
         for colonne in range(largeur+2):
-            nature_case = nouveau_terrain[0,ligne, colonne]
+            nature_case = terrain[0, ligne, colonne]
             if nature_case == 1 or nature_case == 2:
-                nouveau_terrain[1, ligne, colonne] -= 1
-                if nouveau_terrain[1, ligne, colonne] == 0:
-                    nouveau_terrain[0, ligne, colonne] == 0
                 deplacement(ligne, colonne)
+    
     return nouveau_terrain
 
-etape(1, 0)
-
+etape(2, 1)
+print(nouveau_terrain)
+etape(3, 4)
 print(nouveau_terrain)
