@@ -19,8 +19,8 @@ def naissances(Nproies, Npred):
             nature_case = terrain[0,ligne,colonne]
             if nature_case == 0:
                 cases_libres.append(ligne*(largeur+2)+colonne)
-    nouvelles_proies = []
     rd.shuffle(cases_libres)
+    nouvelles_proies = []
     while Nproies != 0:
         nouvelles_proies.append(cases_libres.pop())
         Nproies -= 1
@@ -146,10 +146,261 @@ def etape(Fpro, Fpred):
             nature_case = terrain[0, ligne, colonne]
             if nature_case == 1 or nature_case == 2:
                 deplacement(ligne, colonne)
-    
+                if nature_case == 1:
+                    reproduction(1, ligne, colonne)
+                else:
+                    reproduction(2, ligne, colonne)
     return nouveau_terrain
 
+def reproduction(nature, ligne, colonne):
+    partenaires_potentiels = []
+    if terrain[0, ligne-1, colonne] == nature:
+        partenaires_potentiels.append(1)
+    if terrain[0, ligne, colonne+1] == nature:
+        partenaires_potentiels.append(3)
+    if terrain[0, ligne+1, colonne] == nature:
+        partenaires_potentiels.append(5)
+    if terrain[0, ligne, colonne-1] == nature:
+        partenaires_potentiels.append(7)
+
+    if partenaires_potentiels == []:
+        return terrain
+    rd.shuffle(partenaires_potentiels)
+    partenaire = partenaires_potentiels.pop()
+    position_possible_enfant = []
+    # A B C D E
+    # F G H I J
+    # K L p N O
+    # P Q R S T
+    # U V W X Y
+
+    if partenaire == 1:
+        # B C D
+        # G b I
+        # L a N
+        # Q R S
+        if terrain[0, ligne-2, colonne-1] == 0:
+            position_possible_enfant.append("B")
+        if terrain[0, ligne-2, colonne] == 0:
+            position_possible_enfant.append("C")
+        if terrain[0, ligne-2, colonne+1] == 0:
+            position_possible_enfant.append("D")
+        if terrain[0, ligne-1, colonne+1] == 0:
+            position_possible_enfant.append("I")
+        if terrain[0, ligne, colonne+1] == 0:
+            position_possible_enfant.append("N")
+        if terrain[0, ligne+1, colonne+1] == 0:
+            position_possible_enfant.append("S")
+        if terrain[0, ligne+1, colonne] == 0:
+            position_possible_enfant.append("R")
+        if terrain[0, ligne+1, colonne-1] == 0:
+            position_possible_enfant.append("Q")
+        if terrain[0, ligne, colonne-1] == 0:
+            position_possible_enfant.append("L")
+        if terrain[0, ligne-1, colonne-1] == 0:
+            position_possible_enfant.append("G")
+    
+    elif partenaire == 3:
+        # G H I J
+        # L a b O
+        # Q R S T
+        if terrain[0, ligne-1, colonne-1] == 0:
+            position_possible_enfant.append("G")
+        if terrain[0, ligne-1, colonne] == 0:
+            position_possible_enfant.append("H")
+        if terrain[0, ligne-1, colonne+1] == 0:
+            position_possible_enfant.append("I")
+        if terrain[0, ligne-1, colonne+2] == 0:
+            position_possible_enfant.append("J")
+        if terrain[0, ligne, colonne+2] == 0:
+            position_possible_enfant.append("O")
+        if terrain[0, ligne+1, colonne+2] == 0:
+            position_possible_enfant.append("T")
+        if terrain[0, ligne+1, colonne+1] == 0:
+            position_possible_enfant.append("S")
+        if terrain[0, ligne+1, colonne] == 0:
+            position_possible_enfant.append("R")
+        if terrain[0, ligne+1, colonne-1] == 0:
+            position_possible_enfant.append("Q")
+        if terrain[0, ligne, colonne-1] == 0:
+            position_possible_enfant.append("L")
+    
+    elif partenaire == 5:
+        # G H I
+        # L a N
+        # Q b S
+        # V W X
+        if terrain[0, ligne-1, colonne-1] == 0:
+            position_possible_enfant.append("G")
+        if terrain[0, ligne-1, colonne] == 0:
+            position_possible_enfant.append("H")
+        if terrain[0, ligne-1, colonne+1] == 0:
+            position_possible_enfant.append("I")
+        if terrain[0, ligne, colonne+1] == 0:
+            position_possible_enfant.append("N")
+        if terrain[0, ligne+1, colonne+1] == 0:
+            position_possible_enfant.append("S")
+        if terrain[0, ligne+2, colonne+1] == 0:
+            position_possible_enfant.append("X")
+        if terrain[0, ligne+2, colonne] == 0:
+            position_possible_enfant.append("W")
+        if terrain[0, ligne+2, colonne-1] == 0:
+            position_possible_enfant.append("V")
+        if terrain[0, ligne-1, colonne-1] == 0:
+            position_possible_enfant.append("Q")
+        if terrain[0, ligne, colonne-1] == 0:
+            position_possible_enfant.append("L")
+
+    elif partenaire == 7:
+        # F G H I
+        # K b a N
+        # P Q R S
+        if terrain[0, ligne-1, colonne-2] == 0:
+            position_possible_enfant.append("F")
+        if terrain[0, ligne-1, colonne-1] == 0:
+            position_possible_enfant.append("G")
+        if terrain[0, ligne-1, colonne] == 0:
+            position_possible_enfant.append("H")
+        if terrain[0, ligne-1, colonne+1] == 0:
+            position_possible_enfant.append("I")
+        if terrain[0, ligne, colonne+1] == 0:
+            position_possible_enfant.append("N")
+        if terrain[0, ligne+1, colonne+1] == 0:
+            position_possible_enfant.append("S")
+        if terrain[0, ligne+1, colonne] == 0:
+            position_possible_enfant.append("R")
+        if terrain[0, ligne+1, colonne-1] == 0:
+            position_possible_enfant.append("Q")
+        if terrain[0, ligne+1, colonne-2] == 0:
+            position_possible_enfant.append("P")
+        if terrain[0, ligne, colonne-2] == 0:
+            position_possible_enfant.append("K")
+
+    if position_possible_enfant != []:
+        position_enfant = rd.sample(position_possible_enfant, 1)
+        if position_enfant == "B":
+            nouveau_terrain[0, ligne-2, colonne-1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne-2, colonne-1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne-2, colonne-1] = rd.randint(5, 12)
+        if position_enfant == "C":
+            nouveau_terrain[0, ligne-2, colonne] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne-2, colonne] = rd.randint(2,10)
+            else:
+                nouveau_terrain[1, ligne-2, colonne] = rd.randint(5, 12)
+        if position_enfant == "D":
+            nouveau_terrain[0, ligne-2, colonne+1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne-2, colonne+1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne-2, colonne+1] = rd.randint(5, 12)
+        if position_enfant == "F":
+            nouveau_terrain[0, ligne-1, colonne-2] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne-1, colonne-2] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne-1, colonne-2] = rd.randint(5, 12)
+        if position_enfant == "G":
+            nouveau_terrain[0, ligne-1, colonne-1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne-1, colonne-1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne-1, colonne-1] = rd.randint(5, 12)
+        if position_enfant == "H":
+            nouveau_terrain[0, ligne-1, colonne] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne-1, colonne] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne-1, colonne] = rd.randint(5, 12)
+        if position_enfant == "I":
+            nouveau_terrain[0, ligne-1, colonne+1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne-1, colonne+1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne-1, colonne+1] = rd.randint(5, 12)
+        if position_enfant == "J":
+            nouveau_terrain[0, ligne-1, colonne+2] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne-1, colonne+2] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne-1, colonne+2] = rd.randint(5, 12)
+        if position_enfant == "K":
+            nouveau_terrain[0, ligne, colonne-2] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne, colonne-2] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne, colonne-2] = rd.randint(5, 12)
+        if position_enfant == "L":
+            nouveau_terrain[0, ligne, colonne-1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne, colonne-1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne, colonne-1] = rd.randint(5, 12)
+        if position_enfant == "N":
+            nouveau_terrain[0, ligne, colonne+1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne, colonne+1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne, colonne+1] = rd.randint(5, 12)
+        if position_enfant == "O":
+            nouveau_terrain[0, ligne, colonne+2] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne, colonne+2] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne, colonne+2] = rd.randint(5, 12)
+        if position_enfant == "P":
+            nouveau_terrain[0, ligne+1, colonne-2] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne+1, colonne-2] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne+1, colonne-2] = rd.randint(5, 12)
+        if position_enfant == "Q":
+            nouveau_terrain[0, ligne-2, colonne-1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne+1, colonne-1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne+1, colonne-1] = rd.randint(5, 12)
+        if position_enfant == "R":
+            nouveau_terrain[0, ligne+1, colonne] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne+1, colonne] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne+1, colonne] = rd.randint(5, 12)
+        if position_enfant == "S":
+            nouveau_terrain[0, ligne+1, colonne+1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne+1, colonne+1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne+1, colonne+1] = rd.randint(5, 12)
+        if position_enfant == "T":
+            nouveau_terrain[0, ligne+1, colonne+2] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne+1, colonne+2] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne+1, colonne+2] = rd.randint(5, 12)
+        if position_enfant == "V":
+            nouveau_terrain[0, ligne+2, colonne-1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne+2, colonne-1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne+2, colonne-1] = rd.randint(5, 12)
+        if position_enfant == "W":
+            nouveau_terrain[0, ligne+2, colonne] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne+2, colonne] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne+2, colonne] = rd.randint(5, 12)
+        if position_enfant == "X":
+            nouveau_terrain[0, ligne+2, colonne+1] = nature
+            if nature == 1:
+                nouveau_terrain[1, ligne+2, colonne+1] = rd.randint(2, 10)
+            else:
+                nouveau_terrain[1, ligne+2, colonne+1] = rd.randint(5, 12)
+                
 etape(2, 1)
 print(nouveau_terrain)
 etape(3, 4)
 print(nouveau_terrain)
+
