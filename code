@@ -52,6 +52,11 @@ def naissance_proies(terrain, N):
 def generation_proies(Npro, terrain):
     """generation spontanee des proies au début de la simulation"""
     naissance_proies(terrain, Npro)
+    for _ in range(3):
+        i = rd.randint(0, max)
+        j = rd.randint(0, max)
+        canvas.itemconfigure(grille[i][j], fill="green")
+    
 
 def temps(indice):
     if nouveau_terrain[indice][2] != 0:
@@ -293,9 +298,30 @@ print(terrain)
 etape()
 print(terrain)
 
-# racine = tk.Tk()
-# racine.title("Proies et prédateurs")
-# canvas = tk.Canvas(racine, width=longueur, height=largeur)
-# bouton_start = tk.Button(racine, text="Start", command=lambda: generation_proies())
+#INTERFACE GRAPHIQUE
 
-# racine.mainloop()
+import tkinter as tk
+
+WIDTH = 1400
+HEIGHT = 900
+max = 30
+grille = []
+
+for i in range(max):
+    grille.append([0]*max)
+
+root = tk.Tk()
+canvas = tk.Canvas(root, bg = "white", height=HEIGHT, width=WIDTH)
+terrain = canvas.create_rectangle(0,0, WIDTH-500, HEIGHT, fill = "white")
+
+for i in range (0, max+1):
+    for j in range (0, max+1):
+        case = canvas.create_rectangle(900-max*(max-i), 900-max*(max-j), 900-max*(max-(i+1)), 900-max*(max-(j+1)), fill = "white")
+        grille[i][j]=case
+
+
+demarrer = tk.Button(root, text="démarrer", command=generation_proies)
+
+demarrer.grid()
+canvas.grid()
+root.mainloop()
