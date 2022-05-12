@@ -7,8 +7,8 @@ import time
 
 longueur = 5
 largeur = 5
-Npro = 5
-Npred = 2
+Npro = 10
+Npred = 5
 Erepro = 10
 AgeMinProies = 3
 AgeMaxProies = 5
@@ -154,62 +154,62 @@ def manger(ligne, colonne, verslaproie):
     if verslaproie == 0:
         nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
         nouveau_terrain[1, ligne-1, colonne-1] = nouveau_terrain[1, ligne, colonne]-1
-        nouveau_terrain[2, ligne-1, colonne-1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[2, ligne-1, colonne-1] = nouveau_terrain[2, ligne, colonne]+4
         nouveau_terrain[0, ligne, colonne] = 0
         nouveau_terrain[1, ligne, colonne] = 0
         nouveau_terrain[2, ligne, colonne] = 0
     elif verslaproie == 1:
         nouveau_terrain[0, ligne-1, colonne] = nouveau_terrain[0, ligne, colonne]
         nouveau_terrain[1, ligne-1, colonne] = nouveau_terrain[1, ligne, colonne]-1
-        nouveau_terrain[2, ligne-1, colonne] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[2, ligne-1, colonne] = nouveau_terrain[2, ligne, colonne]+4
         nouveau_terrain[0, ligne, colonne] = 0
         nouveau_terrain[1, ligne, colonne] = 0
         nouveau_terrain[2, ligne, colonne] = 0
     elif verslaproie == 2:
         nouveau_terrain[0, ligne-1, colonne+1] = nouveau_terrain[0, ligne, colonne]
         nouveau_terrain[1, ligne-1, colonne+1] = nouveau_terrain[1, ligne, colonne]-1
-        nouveau_terrain[2, ligne-1, colonne+1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[2, ligne-1, colonne+1] = nouveau_terrain[2, ligne, colonne]+4
         nouveau_terrain[0, ligne, colonne] = 0
         nouveau_terrain[1, ligne, colonne] = 0
         nouveau_terrain[2, ligne, colonne] = 0
     elif verslaproie == 3:
         nouveau_terrain[0, ligne, colonne+1] = nouveau_terrain[0, ligne, colonne]
         nouveau_terrain[1, ligne, colonne+1] = nouveau_terrain[1, ligne, colonne]-1
-        nouveau_terrain[2, ligne, colonne+1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[2, ligne, colonne+1] = nouveau_terrain[2, ligne, colonne]+4
         nouveau_terrain[0, ligne, colonne] = 0
         nouveau_terrain[1, ligne, colonne] = 0
         nouveau_terrain[2, ligne, colonne] = 0
     elif verslaproie == 4:
         nouveau_terrain[0, ligne+1, colonne+1] = nouveau_terrain[0, ligne, colonne]
         nouveau_terrain[1, ligne+1, colonne+1] = nouveau_terrain[1, ligne, colonne]-1
-        nouveau_terrain[2, ligne+1, colonne+1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[2, ligne+1, colonne+1] = nouveau_terrain[2, ligne, colonne]+4
         nouveau_terrain[0, ligne, colonne] = 0
         nouveau_terrain[1, ligne, colonne] = 0
         nouveau_terrain[2, ligne, colonne] = 0
     elif verslaproie == 5:
         nouveau_terrain[0, ligne+1, colonne] = nouveau_terrain[0, ligne, colonne]
         nouveau_terrain[1, ligne+1, colonne] = nouveau_terrain[1, ligne, colonne]-1
-        nouveau_terrain[2, ligne+1, colonne] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[2, ligne+1, colonne] = nouveau_terrain[2, ligne, colonne]+4
         nouveau_terrain[0, ligne, colonne] = 0
         nouveau_terrain[1, ligne, colonne] = 0
         nouveau_terrain[2, ligne, colonne] = 0
     elif verslaproie == 6:
         nouveau_terrain[0, ligne+1, colonne-1] = nouveau_terrain[0, ligne, colonne]
         nouveau_terrain[1, ligne+1, colonne-1] = nouveau_terrain[1, ligne, colonne]-1
-        nouveau_terrain[2, ligne+1, colonne-1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[2, ligne+1, colonne-1] = nouveau_terrain[2, ligne, colonne]+4
         nouveau_terrain[0, ligne, colonne] = 0
         nouveau_terrain[1, ligne, colonne] = 0
         nouveau_terrain[2, ligne, colonne] = 0
     elif verslaproie == 7:
         nouveau_terrain[0, ligne, colonne-1] = nouveau_terrain[0, ligne, colonne]
         nouveau_terrain[1, ligne, colonne-1] = nouveau_terrain[1, ligne, colonne]-1
-        nouveau_terrain[2, ligne, colonne-1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[2, ligne, colonne-1] = nouveau_terrain[2, ligne, colonne]+4
         nouveau_terrain[0, ligne, colonne] = 0
         nouveau_terrain[1, ligne, colonne] = 0
         nouveau_terrain[2, ligne, colonne] = 0
 
 def chasse(ligne, colonne):
-    nouvelle_case = 42 #valeur juste pour ne pas déclencher d'erreur
+    #nouvelle_case= 42 #valeur juste pour ne pas déclencher d'erreur
     """Correspond au parametre flair de l'enonce.
     Permet les deplacements optimaux des predateurs pour manger des proies
     Si une proie se situe dans les environs, cette fonction remplace deplacement"""
@@ -294,9 +294,11 @@ def chasse(ligne, colonne):
         elif verslaproie == 8:
             cases_acces_dispo = []
             if terrain[0,ligne-1,colonne-1] == 0 and nouveau_terrain[0,ligne-1,colonne-1] == 0:
-                    cases_acces_dispo.append(0)
+                cases_acces_dispo.append(0)
             if terrain[0,ligne-1,colonne] == 0 and nouveau_terrain[0,ligne-1,colonne] == 0:
-                    cases_acces_dispo.append(1)
+                cases_acces_dispo.append(1)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
             nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]#on chosit un déplacement le plus rapide parmi ceux possibles
             if nouvelle_case == 0:
                 nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
@@ -323,6 +325,8 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(1)
             if terrain[0,ligne-1,colonne+1] == 0 and nouveau_terrain[0,ligne-1,colonne+1] == 0:
                 cases_acces_dispo.append(2)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
             nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 0:
                 nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
@@ -354,8 +358,9 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(1)
             if terrain[0,ligne-1,colonne+1] == 0 and nouveau_terrain[0,ligne-1,colonne+1] == 0:
                 cases_acces_dispo.append(2)
-            if cases_acces_dispo != []:
-                nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 1:
                 nouveau_terrain[0, ligne-1, colonne] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne-1, colonne] = nouveau_terrain[1, ligne, colonne] - 1
@@ -904,7 +909,7 @@ def etape():
             if nature_case == 1:
                 reproduction(1, ligne, colonne)
                 fuite(ligne, colonne)
-            else:
+            elif nature_case == 2:
                 reproduction(2, ligne, colonne)
                 chasse(ligne, colonne)
     print(nouveau_terrain)
@@ -1189,162 +1194,53 @@ while nbTours != 0:
     etape()
     time.sleep(2)
     nbTours -= 1
-
-
-
-
+    
 #INTERFACE GRAPHIQUE
 
- 
-
 #L'interface affiche une grille mais nous n'avons pas reussi a etablir le lien entre la grille tkinter et le reste du programme.
-
 #En effet l'un des membres a rencontré de gros problèmes informatique, et il se trouve qu'il s'agissait de la personne chargée de cette partie..
-
 #Nous allons tenter de resoudre ce probleme avant la presentation
-
-import tkinter as tk
-
-N = 30
-
-WIDTH = 1400
-
-HEIGHT = 900
-
- 
-
-grille = []
-
- 
-
-root = tk.Tk()
-
-root.title("Simulation proies predateurs")
-
-canvas = tk.Canvas(root, bg = "white", height=HEIGHT, width=WIDTH)
-
-terrain = canvas.create_rectangle(0,0, WIDTH-500, HEIGHT, fill = "white")
-
- 
-
-for i in range(N):
-
-    grille.append([0]*N)
-
-   
-
-def init():
-
-    for i in range (0, N):
-
-        for j in range (0, N):
-
-            if nouveau_terrain[0, i, j]== 0:
-
-                col = "white"
-
-            elif nouveau_terrain[0, i, j] == 1:
-
-                col = "blue"
-
-            elif nouveau_terrain[0, i, j] == 2:
-
-                col = "red"
-
-            else:
-
-                col = "black"
-
-            case = canvas.create_rectangle(900-N*(N-i), 900-N*(N-j), 900-N*(N-(i+1)), 900-N*(N-(j+1)), fill = col)
-
-            grille[i][j]=case
-
- 
-
-#nouveau_terrain est toujours égal à 0 !
-
- 
-
-def save_fct():
-
-    fic = open("save.txt", "w")
-
-    fic.write(str(nouveau_terrain) + "\n")
-
-    fic.close()
-
- 
-
-def load_fct():
-
-    global N
-
-    fic = open("save.txt", "r")
-
-    size = fic.readline()
-
-    N = int(size)
-
-    canvas.delete()
-
-    initialisation()
-
-    i = j = 0
-
-    for ligne in fic:
-
-        nouveau_terrain = int(ligne)
-
-        j += 1
-
-        if j == N:
-
-            j = 0
-
-            i += 1
-
-    fic.close()
-
- 
-
-#Boutons
-
- 
-
-generation=tk.Button(root,text="générer terrain",command=init)
-
-start = tk.Button(root, text="start") #pour lancer la simulation. il faut mettre les fonctions en relation avec l'interface
-
-arret=tk.Button(root, text="stop", command=root.destroy) #arret total
-
-pause=tk.Button(root,text="pause") #mettre en pause
-
- 
-
-save=tk.Button(root,text="save", command = save_fct)
-
-load=tk.Button(root,text="load", command = load_fct)
-
- 
-
-#grid
-
- 
-
-generation.grid()
-
-start.grid()
-
-save.grid()
-
-load.grid()
-
-arret.grid()
-
-canvas.grid()
-
- 
-
-#Boucle
-
-root.mainloop()
+""" from tkinter import *
+
+
+#La partie ci-dessous s'appuie fortement sur la correction du projet tas de sable.
+# taille de la grille carrée
+N = 30
+# dimensions du canvas et de la grille
+LARGEUR = 700
+HAUTEUR = 700
+LARGEUR_CASE = LARGEUR // N
+HAUTEUR_CASE = HAUTEUR // N
+
+
+
+racine = tk.Tk()
+racine.title("Simulation proies predateurs")
+
+# définition des widgets
+canvas = tk.Canvas(racine, width=LARGEUR, height=HAUTEUR)
+
+bouton_start = tk.Button(racine, text="Start")
+def init():
+    new_terrain = initialisation()
+    grille = [[0 for i in range(N+2)] for j in range(N+2)]
+    for i in range(1, N+1):
+        x = (i - 1) * LARGEUR_CASE
+        for j in range(1, N+1):
+            y = (j - 1) * HAUTEUR_CASE
+            if new_terrain[0, i, j] == 0:
+                col = "white"
+            elif new_terrain[0, i, j] == 1:
+                col = "blue"
+            elif new_terrain[0, i, j] == 2:
+                col = "red"
+            else:
+                col = "black"
+            carre = canvas.create_rectangle(x, y, x+LARGEUR_CASE, y+HAUTEUR_CASE, fill=col, outline = "grey50")
+            grille[i][j] = carre
+
+init()
+canvas.grid(row=0, column=1, rowspan=6)
+
+# boucle prinicipale
+racine.mainloop() """
