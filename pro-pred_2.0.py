@@ -14,7 +14,7 @@ AgeMinProies = 3
 AgeMaxProies = 5
 AgeMinPredateurs = 7
 AgeMaxPredateurs = 12
-nbTours = 10
+nbTours = 1
 
 #Creation terrain
 def initialisation():
@@ -42,7 +42,7 @@ def naissances(terrain, nouveau_terrain, Nproies, Npred):
         for colonne in range(largeur+4):
             nature_case = terrain[0,ligne,colonne]
             if nature_case == 0:
-                cases_libres.append(ligne*(largeur+2)+colonne) #indexation des cases par un indice plus compliqué mais adapté à un tableau unidimensionnel
+                cases_libres.append(ligne*(largeur+4)+colonne) #indexation des cases par un indice plus compliqué mais adapté à un tableau unidimensionnel
     rd.shuffle(cases_libres) #On mélange pour obtenir un indice aléatoire
     nouvelles_proies = [] #Les prochaines lignes permettent d'obtenir un tirage sans remise dans les cases libres
     while Nproies != 0:
@@ -60,7 +60,7 @@ def naissances(terrain, nouveau_terrain, Nproies, Npred):
         colonne_nouveau_predateur = i%(largeur+4)
         nouveau_terrain[0, ligne_nouveau_predateur, colonne_nouveau_predateur] = 2
         nouveau_terrain[1, ligne_nouveau_predateur, colonne_nouveau_predateur] = rd.randint(AgeMinPredateurs, AgeMaxPredateurs)
-        nouveau_terrain[2, ligne_nouveau_predateur, colonne_nouveau_predateur] = rd.randint(3, nouveau_terrain[1, ligne_nouveau_predateur, colonne_nouveau_predateur]-1) #On est bornés par la formule Epre<Apre
+        nouveau_terrain[2, ligne_nouveau_predateur, colonne_nouveau_predateur] = rd.randint(5, nouveau_terrain[1, ligne_nouveau_predateur, colonne_nouveau_predateur]-1) #On est bornés par la formule Epre<Apre
     return nouveau_terrain 
 
 def deplacement(ligne, colonne):
@@ -90,64 +90,65 @@ def deplacement(ligne, colonne):
         cases_adjacentes_dispo.append(6)
     if terrain[0,ligne,colonne-1] == 0 and nouveau_terrain[0,ligne,colonne-1] == 0:
         cases_adjacentes_dispo.append(7)
-    if cases_adjacentes_dispo != []:#on s'assure qu'un déplacement est effectivement possible
-        nouvelle_case = cases_adjacentes_dispo[rd.randint(0, len(cases_adjacentes_dispo)-1)]#on chosit un déplacement au hasard parmi ceux possibles
-        if nouvelle_case == 0:
-            nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
-            nouveau_terrain[1, ligne-1, colonne-1] = nouveau_terrain[1, ligne, colonne]-1
-            nouveau_terrain[2, ligne-1, colonne-1] = nouveau_terrain[2, ligne, colonne]-1
-            nouveau_terrain[0, ligne, colonne] = 0
-            nouveau_terrain[1, ligne, colonne] = 0
-            nouveau_terrain[2, ligne, colonne] = 0
-        elif nouvelle_case == 1:
-            nouveau_terrain[0, ligne-1, colonne] = nouveau_terrain[0, ligne, colonne]
-            nouveau_terrain[1, ligne-1, colonne] = nouveau_terrain[1, ligne, colonne]-1
-            nouveau_terrain[2, ligne-1, colonne] = nouveau_terrain[2, ligne, colonne]-1
-            nouveau_terrain[0, ligne, colonne] = 0
-            nouveau_terrain[1, ligne, colonne] = 0
-            nouveau_terrain[2, ligne, colonne] = 0
-        elif nouvelle_case == 2:
-            nouveau_terrain[0, ligne-1, colonne+1] = nouveau_terrain[0, ligne, colonne]
-            nouveau_terrain[1, ligne-1, colonne+1] = nouveau_terrain[1, ligne, colonne]-1
-            nouveau_terrain[2, ligne-1, colonne+1] = nouveau_terrain[2, ligne, colonne]-1
-            nouveau_terrain[0, ligne, colonne] = 0
-            nouveau_terrain[1, ligne, colonne] = 0
-            nouveau_terrain[2, ligne, colonne] = 0
-        elif nouvelle_case == 3:
-            nouveau_terrain[0, ligne, colonne+1] = nouveau_terrain[0, ligne, colonne]
-            nouveau_terrain[1, ligne, colonne+1] = nouveau_terrain[1, ligne, colonne]-1
-            nouveau_terrain[2, ligne, colonne+1] = nouveau_terrain[2, ligne, colonne]-1
-            nouveau_terrain[0, ligne, colonne] = 0
-            nouveau_terrain[1, ligne, colonne] = 0
-            nouveau_terrain[2, ligne, colonne] = 0
-        elif nouvelle_case == 4:
-            nouveau_terrain[0, ligne+1, colonne+1] = nouveau_terrain[0, ligne, colonne]
-            nouveau_terrain[1, ligne+1, colonne+1] = nouveau_terrain[1, ligne, colonne]-1
-            nouveau_terrain[2, ligne+1, colonne+1] = nouveau_terrain[2, ligne, colonne]-1
-            nouveau_terrain[0, ligne, colonne] = 0
-            nouveau_terrain[1, ligne, colonne] = 0
-            nouveau_terrain[2, ligne, colonne] = 0
-        elif nouvelle_case == 5:
-            nouveau_terrain[0, ligne+1, colonne] = nouveau_terrain[0, ligne, colonne]
-            nouveau_terrain[1, ligne+1, colonne] = nouveau_terrain[1, ligne, colonne]-1
-            nouveau_terrain[2, ligne+1, colonne] = nouveau_terrain[2, ligne, colonne]-1
-            nouveau_terrain[0, ligne, colonne] = 0
-            nouveau_terrain[1, ligne, colonne] = 0
-            nouveau_terrain[2, ligne, colonne] = 0
-        elif nouvelle_case == 6:
-            nouveau_terrain[0, ligne+1, colonne-1] = nouveau_terrain[0, ligne, colonne]
-            nouveau_terrain[1, ligne+1, colonne-1] = nouveau_terrain[1, ligne, colonne]-1
-            nouveau_terrain[2, ligne+1, colonne-1] = nouveau_terrain[2, ligne, colonne]-1
-            nouveau_terrain[0, ligne, colonne] = 0
-            nouveau_terrain[1, ligne, colonne] = 0
-            nouveau_terrain[2, ligne, colonne] = 0
-        elif nouvelle_case == 7:
-            nouveau_terrain[0, ligne, colonne-1] = nouveau_terrain[0, ligne, colonne]
-            nouveau_terrain[1, ligne, colonne-1] = nouveau_terrain[1, ligne, colonne]-1
-            nouveau_terrain[2, ligne, colonne-1] = nouveau_terrain[2, ligne, colonne]-1
-            nouveau_terrain[0, ligne, colonne] = 0
-            nouveau_terrain[1, ligne, colonne] = 0
-            nouveau_terrain[2, ligne, colonne] = 0
+    if cases_adjacentes_dispo == []:
+        return nouveau_terrain #on s'assure qu'un déplacement est effectivement possible
+    nouvelle_case = cases_adjacentes_dispo[rd.randint(0, len(cases_adjacentes_dispo)-1)]#on chosit un déplacement au hasard parmi ceux possibles
+    if nouvelle_case == 0:
+        nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
+        nouveau_terrain[1, ligne-1, colonne-1] = nouveau_terrain[1, ligne, colonne]-1
+        nouveau_terrain[2, ligne-1, colonne-1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[0, ligne, colonne] = 0
+        nouveau_terrain[1, ligne, colonne] = 0
+        nouveau_terrain[2, ligne, colonne] = 0
+    elif nouvelle_case == 1:
+        nouveau_terrain[0, ligne-1, colonne] = nouveau_terrain[0, ligne, colonne]
+        nouveau_terrain[1, ligne-1, colonne] = nouveau_terrain[1, ligne, colonne]-1
+        nouveau_terrain[2, ligne-1, colonne] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[0, ligne, colonne] = 0
+        nouveau_terrain[1, ligne, colonne] = 0
+        nouveau_terrain[2, ligne, colonne] = 0
+    elif nouvelle_case == 2:
+        nouveau_terrain[0, ligne-1, colonne+1] = nouveau_terrain[0, ligne, colonne]
+        nouveau_terrain[1, ligne-1, colonne+1] = nouveau_terrain[1, ligne, colonne]-1
+        nouveau_terrain[2, ligne-1, colonne+1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[0, ligne, colonne] = 0
+        nouveau_terrain[1, ligne, colonne] = 0
+        nouveau_terrain[2, ligne, colonne] = 0
+    elif nouvelle_case == 3:
+        nouveau_terrain[0, ligne, colonne+1] = nouveau_terrain[0, ligne, colonne]
+        nouveau_terrain[1, ligne, colonne+1] = nouveau_terrain[1, ligne, colonne]-1
+        nouveau_terrain[2, ligne, colonne+1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[0, ligne, colonne] = 0
+        nouveau_terrain[1, ligne, colonne] = 0
+        nouveau_terrain[2, ligne, colonne] = 0
+    elif nouvelle_case == 4:
+        nouveau_terrain[0, ligne+1, colonne+1] = nouveau_terrain[0, ligne, colonne]
+        nouveau_terrain[1, ligne+1, colonne+1] = nouveau_terrain[1, ligne, colonne]-1
+        nouveau_terrain[2, ligne+1, colonne+1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[0, ligne, colonne] = 0
+        nouveau_terrain[1, ligne, colonne] = 0
+        nouveau_terrain[2, ligne, colonne] = 0
+    elif nouvelle_case == 5:
+        nouveau_terrain[0, ligne+1, colonne] = nouveau_terrain[0, ligne, colonne]
+        nouveau_terrain[1, ligne+1, colonne] = nouveau_terrain[1, ligne, colonne]-1
+        nouveau_terrain[2, ligne+1, colonne] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[0, ligne, colonne] = 0
+        nouveau_terrain[1, ligne, colonne] = 0
+        nouveau_terrain[2, ligne, colonne] = 0
+    elif nouvelle_case == 6:
+        nouveau_terrain[0, ligne+1, colonne-1] = nouveau_terrain[0, ligne, colonne]
+        nouveau_terrain[1, ligne+1, colonne-1] = nouveau_terrain[1, ligne, colonne]-1
+        nouveau_terrain[2, ligne+1, colonne-1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[0, ligne, colonne] = 0
+        nouveau_terrain[1, ligne, colonne] = 0
+        nouveau_terrain[2, ligne, colonne] = 0
+    elif nouvelle_case == 7:
+        nouveau_terrain[0, ligne, colonne-1] = nouveau_terrain[0, ligne, colonne]
+        nouveau_terrain[1, ligne, colonne-1] = nouveau_terrain[1, ligne, colonne]-1
+        nouveau_terrain[2, ligne, colonne-1] = nouveau_terrain[2, ligne, colonne]-1
+        nouveau_terrain[0, ligne, colonne] = 0
+        nouveau_terrain[1, ligne, colonne] = 0
+        nouveau_terrain[2, ligne, colonne] = 0
     return nouveau_terrain
 
 def manger(ligne, colonne, verslaproie):
@@ -385,6 +386,8 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(2)
             if terrain[0,ligne,colonne+1] == 0 and nouveau_terrain[0,ligne,colonne+1] == 0:
                 cases_acces_dispo.append(3)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
             nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 2:
                 nouveau_terrain[0, ligne-1, colonne+1] = nouveau_terrain[0, ligne, colonne]
@@ -414,6 +417,8 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(3)
             if terrain[0,ligne+1,colonne+1] == 0 and nouveau_terrain[0,ligne+1,colonne+1] == 0:
                 cases_acces_dispo.append(4)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
             nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 2:
                 nouveau_terrain[0, ligne-1, colonne+1] = nouveau_terrain[0, ligne, colonne]
@@ -445,6 +450,10 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(3)
             if terrain[0,ligne+1,colonne+1] == 0 and nouveau_terrain[0,ligne+1,colonne+1] == 0:
                 cases_acces_dispo.append(4)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            if cases_acces_dispo == []:
+                return nouveau_terrain
             nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 3:
                 nouveau_terrain[0, ligne, colonne+1] = nouveau_terrain[0, ligne, colonne]
@@ -469,8 +478,9 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(4)
             if terrain[0,ligne+1,colonne] == 0 and nouveau_terrain[0,ligne+1,colonne] == 0:
                 cases_acces_dispo.append(5)
-            if cases_acces_dispo != []:
-                nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 4:
                 nouveau_terrain[0, ligne+1, colonne+1] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne+1, colonne+1] = nouveau_terrain[1, ligne, colonne] - 1
@@ -495,8 +505,9 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(5)
             if terrain[0,ligne+1,colonne-1] == 0 and nouveau_terrain[0,ligne+1,colonne-1] == 0:
                 cases_acces_dispo.append(6)
-            if cases_acces_dispo != []:
-                nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 4:
                 nouveau_terrain[0, ligne+1, colonne+1] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne+1, colonne+1] = nouveau_terrain[1, ligne, colonne] - 1
@@ -528,8 +539,11 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(5)
             if terrain[0,ligne+1,colonne-1] == 0 and nouveau_terrain[0,ligne+1,colonne-1] == 0:
                 cases_acces_dispo.append(6)
-            if cases_acces_dispo != []:
-                nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 5:
                 nouveau_terrain[0, ligne+1, colonne] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne+1, colonne] = nouveau_terrain[1, ligne, colonne] - 1
@@ -552,8 +566,9 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(6)
             if terrain[0,ligne,colonne-1] == 0 and nouveau_terrain[0,ligne,colonne-1] == 0:
                 cases_acces_dispo.append(7)
-            if cases_acces_dispo != []:
-                nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 6:
                 nouveau_terrain[0, ligne+1, colonne-1] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne+1, colonne-1] = nouveau_terrain[1, ligne, colonne] - 1
@@ -579,6 +594,8 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(6)
             if terrain[0,ligne,colonne-1] == 0 and nouveau_terrain[0,ligne,colonne-1] == 0:
                 cases_acces_dispo.append(7)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
             nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 0:
                 nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
@@ -609,6 +626,8 @@ def chasse(ligne, colonne):
                 cases_acces_dispo.append(0)
             if terrain[0,ligne,colonne-1] == 0 and nouveau_terrain[0,ligne,colonne-1] == 0:
                 cases_acces_dispo.append(7)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
             nouvelle_case = cases_acces_dispo[rd.randint(0, len(cases_acces_dispo)-1)]
             if nouvelle_case == 0:
                 nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
@@ -695,8 +714,9 @@ def fuite(ligne, colonne):
                 cases_acces_dispo.append(1)
             if terrain[0,ligne+1,colonne] == 0 and nouveau_terrain[0,ligne+1,colonne] == 0:
                 cases_acces_dispo.append(2)
-            if cases_acces_dispo != []:
-                nouvelle_case = rd.sample(cases_acces_dispo, 1)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = rd.sample(cases_acces_dispo, 1)
             if nouvelle_case == 1:
                 nouveau_terrain[0, ligne, colonne+1] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne, colonne+1] = nouveau_terrain[1, ligne, colonne]
@@ -720,8 +740,9 @@ def fuite(ligne, colonne):
                 cases_acces_dispo.append(2)
             if terrain[0,ligne,colonne-1] == 0 and nouveau_terrain[0,ligne,colonne-1] == 0:
                 cases_acces_dispo.append(3)
-            if cases_acces_dispo != []:
-                nouvelle_case = rd.sample(cases_acces_dispo, 1)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = rd.sample(cases_acces_dispo, 1)
             if nouvelle_case == 2:
                 nouveau_terrain[0, ligne+1, colonne] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne+1, colonne] = nouveau_terrain[1, ligne, colonne]
@@ -746,8 +767,9 @@ def fuite(ligne, colonne):
                 cases_acces_dispo.append(3)
             if terrain[0,ligne-1,colonne] == 0 and nouveau_terrain[0,ligne-1,colonne] == 0:
                 cases_acces_dispo.append(0)
-            if cases_acces_dispo != []:
-                nouvelle_case = rd.sample(cases_acces_dispo, 1)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = rd.sample(cases_acces_dispo, 1)
             if nouvelle_case == 3:
                 nouveau_terrain[0, ligne, colonne-1] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne, colonne-1] = nouveau_terrain[1, ligne, colonne]
@@ -771,8 +793,9 @@ def fuite(ligne, colonne):
                 cases_acces_dispo.append(0)
             if terrain[0,ligne,colonne+1] == 0 and nouveau_terrain[0,ligne,colonne+1] == 0:
                 cases_acces_dispo.append(1)
-            if cases_acces_dispo != []:
-                nouvelle_case = rd.sample(cases_acces_dispo, 1)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = rd.sample(cases_acces_dispo, 1)
             if nouvelle_case == 0:
                 nouveau_terrain[0, ligne-1, colonne] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne-1, colonne] = nouveau_terrain[1, ligne, colonne]
@@ -797,8 +820,9 @@ def fuite(ligne, colonne):
                 cases_acces_dispo.append(6)
             if terrain[0,ligne+1,colonne-1] == 0 and nouveau_terrain[0,ligne+1,colonne-1] == 0:
                 cases_acces_dispo.append(7)
-            if cases_acces_dispo != []:
-                nouvelle_case = rd.sample(cases_acces_dispo, 1)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = rd.sample(cases_acces_dispo, 1)
             if nouvelle_case == 6:
                 nouveau_terrain[0, ligne+1, colonne+1] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne+1, colonne+1] = nouveau_terrain[1, ligne, colonne]
@@ -823,8 +847,9 @@ def fuite(ligne, colonne):
                 cases_acces_dispo.append(4)
             if terrain[0,ligne+1,colonne-1] == 0 and nouveau_terrain[0,ligne+1,colonne-1] == 0:
                 cases_acces_dispo.append(7)
-            if cases_acces_dispo != []:
-                nouvelle_case = rd.sample(cases_acces_dispo, 1)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = rd.sample(cases_acces_dispo, 1)
             if nouvelle_case == 4:
                 nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne-1, colonne-1] = nouveau_terrain[1, ligne, colonne]
@@ -850,8 +875,9 @@ def fuite(ligne, colonne):
                 cases_acces_dispo.append(4)
             if terrain[0,ligne-1,colonne+1] == 0 and nouveau_terrain[0,ligne-1,colonne+1] == 0:
                 cases_acces_dispo.append(5)
-            if cases_acces_dispo != []:
-                nouvelle_case = rd.sample(cases_acces_dispo, 1)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = rd.sample(cases_acces_dispo, 1)
             if nouvelle_case == 4:
                 nouveau_terrain[0, ligne-1, colonne-1] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne-1, colonne-1] = nouveau_terrain[1, ligne, colonne]
@@ -876,8 +902,9 @@ def fuite(ligne, colonne):
                 cases_acces_dispo.append(5)
             if terrain[0,ligne+1,colonne+1] == 0 and nouveau_terrain[0,ligne+1,colonne+1] == 0:
                 cases_acces_dispo.append(6)
-            if cases_acces_dispo != []:
-                nouvelle_case = rd.sample(cases_acces_dispo, 1)
+            if cases_acces_dispo == []:
+                return nouveau_terrain
+            nouvelle_case = rd.sample(cases_acces_dispo, 1)
             if nouvelle_case == 5:
                 nouveau_terrain[0, ligne-1, colonne+1] = nouveau_terrain[0, ligne, colonne]
                 nouveau_terrain[1, ligne-1, colonne+1] = nouveau_terrain[1, ligne, colonne]
