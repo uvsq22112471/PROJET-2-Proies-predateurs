@@ -7,15 +7,15 @@ import time
 
 longueur = 30
 largeur = 30
-Npro = 25
-Npred = 10
+Npro = 5
+Npred = 2
 nbArbres = 10
 Erepro = 10
 AgeMinProies = 3
 AgeMaxProies = 5
 AgeMinPredateurs = 7
 AgeMaxPredateurs = 12
-nbTours = 10
+nbTours = 1
 
 def init():
     nouveau_terrain = initialisation()
@@ -57,8 +57,6 @@ def initialisation():
                 terrain[0,ligne,colonne] = 3
     naissances(terrain, nouveau_terrain, Npro, Npred)
     return nouveau_terrain #les return sont non nécessaires au vu de la structure en tableaux, mais le code est plus lisible ainsi donc nous faisons le choix de les garder
-
-
 
 def naissances(terrain, nouveau_terrain, Nproies, Npred):
 
@@ -1362,7 +1360,6 @@ def load_fct():
 
 def boucle(terrain, nouveau_terrain, grille):
     nouveau_terrain = np.array(etape(terrain, nouveau_terrain))
-    time.sleep(.5)
     for i in range (1, N):
         for j in range (1, N):
             if nouveau_terrain[0, i, j] == 0:
@@ -1375,17 +1372,18 @@ def boucle(terrain, nouveau_terrain, grille):
                 col = "black"
             x = (i - 1) * LARGEUR_CASE
             y = (j - 1) * HAUTEUR_CASE
-            case = canvas.create_rectangle(x, y, x+LARGEUR_CASE, y+HAUTEUR_CASE, fill=col, outline = "grey50")
-            grille[i][j] = case
-    return nouveau_terrain
+            carre = canvas.create_rectangle(x, y, x+LARGEUR_CASE, y+HAUTEUR_CASE, fill = col, outline = "grey50")
+            grille[i][j] = carre
 
 def start_fct():
-    global nbTours, terrain, nouveau_terrain
-    while nbTours != 0:
-        nouveau_terrain = np.array(boucle(terrain, nouveau_terrain, grille))
+    global terrain, nouveau_terrain
+    tours = nbTours
+    while tours != 0:
+        boucle(terrain, nouveau_terrain, grille)
         terrain = nouveau_terrain
         nouveau_terrain = terrain.copy()
-        nbTours -= 1
+        time.sleep(1)
+        tours -= 1
 
 generation=tk.Button(root,text="générer terrain",command=init)
 start = tk.Button(root, text="start", command=start_fct) #pour lancer la simulation. il faut mettre les fonctions en relation avec l'interface
