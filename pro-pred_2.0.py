@@ -17,7 +17,7 @@ AgeMinPredateurs = 7
 AgeMaxPredateurs = 12
 nbTours = 1
 
-def init():
+"""def init():
     nouveau_terrain = initialisation()
     grille = [[0 for i in range(N+2)] for j in range(N+2)]
     for i in range(1, N):
@@ -35,7 +35,7 @@ def init():
             carre = canvas.create_rectangle(x, y, x+LARGEUR_CASE, y+HAUTEUR_CASE, fill=col, outline = "grey50")
             grille[i][j] = carre
     return nouveau_terrain
-
+"""
 #Creation terrain
 
 def initialisation():
@@ -1296,7 +1296,7 @@ canvas.grid(row=0, column=1, rowspan=6)
 # boucle prinicipale
 racine.mainloop() """
 
-N = longueur
+"""N = longueur
 M = largeur
 
 WIDTH = 700
@@ -1414,4 +1414,205 @@ canvas.grid(row = 0, column = 1, rowspan = 6)
 #Boucle
 
 root.mainloop()
+"""
 
+import tkinter as tk
+
+N = largeur+1
+
+WIDTH = 900
+
+HEIGHT = 900
+
+tours=25
+
+grille = []
+
+ 
+
+for i in range(N):
+
+    grille.append([0]*N)
+
+ 
+
+#fonctions de l'interface
+
+ 
+
+def init(): #permet de mettre en lien la matrice du terrain avec l'interface et ainsi de générer le terrain lorsque le bouton assicié est activé
+
+            #on verifie la valeur qui définit le type de la case et on la colore en fonction de celle ci.
+
+    global nbTours
+
+    nouveau_terrain = initialisation()
+
+    for i in range (0, N):
+
+        for j in range (0, N):
+
+            if nouveau_terrain[0, i, j] == 0:
+
+                col = "white"
+
+            elif nouveau_terrain[0, i, j] == 1:
+
+                col = "blue"
+
+            elif nouveau_terrain[0, i, j] == 2:
+
+                col = "red"
+
+            else:
+
+                col = "black"
+
+            case = canvas.create_rectangle(HEIGHT-N*(N-i), HEIGHT-N*(N-j), HEIGHT-N*(N-(i+1)), HEIGHT-N*(N-(j+1)), fill = col)
+
+            grille[i][j]=case  
+
+ 
+
+def save_fct():
+
+    fic = open("save.txt", "w")
+
+    fic.write(str(nouveau_terrain))
+
+    fic.close()
+
+ 
+
+def load_fct(): #ne fonctionnait pas car on ne peut pas int() nouveau_terrain a cause du \n imposé par numpy
+
+    global nouveau_terrain,N
+
+    fic = open("save.txt", "r")
+
+    nouveau_terrain = fic.readline()
+
+    canvas.delete()
+
+    init()
+
+    fic.close()
+
+   
+
+ 
+def boucle(terrain, nouveau_terrain, grille):
+    nouveau_terrain = np.array(etape(terrain, nouveau_terrain))
+    for i in range (1, N):
+        for j in range (1, N):
+            if nouveau_terrain[0, i, j] == 0:
+                col = "white"
+            elif nouveau_terrain[0, i, j] == 1:
+                col = "blue"
+            elif nouveau_terrain[0, i, j] == 2:
+                col = "red"
+            else:
+                col = "black"
+            carre = canvas.create_rectangle(HEIGHT-N*(N-i), HEIGHT-N*(N-j), HEIGHT-N*(N-(i+1)), HEIGHT-N*(N-(j+1)), fill = col, outline = "grey50")
+            grille[i][j] = carre
+
+def start_fct():
+    global terrain, nouveau_terrain
+    boucle(terrain, nouveau_terrain, grille)
+    terrain = nouveau_terrain
+    nouveau_terrain = terrain.copy()
+
+
+
+ 
+"""
+def start_fct():
+
+    global terrain, nouveau_terrain
+
+    etape(terrain, nouveau_terrain)
+
+    time.sleep(2)
+
+    for i in range (0, N):
+
+        for j in range (0, N):
+
+            if nouveau_terrain[0, i, j] == 0:
+
+                col = "white"
+
+            elif nouveau_terrain[0, i, j] == 1:
+
+                col = "blue"
+
+            elif nouveau_terrain[0, i, j] == 2:
+
+                col = "red"
+
+            else:
+
+                col = "black"
+
+            case = canvas.create_rectangle(HEIGHT-N*(N-i), HEIGHT-N*(N-j), HEIGHT-N*(N-(i+1)), HEIGHT-N*(N-(j+1)), fill = col)
+
+            grille[i][j] = case
+
+    return nouveau_terrain        
+"""
+
+##interface
+
+ 
+
+root = tk.Tk()
+
+root.title("Simulation proies predateurs")
+
+root.configure(bg="black")
+
+canvas = tk.Canvas(root, bg = "black", height=HEIGHT, width=WIDTH)
+
+ 
+
+#Boutons
+
+ 
+
+generation=tk.Button(root,text="générer terrain",command=init)
+
+start = tk.Button(root, text="start",command=start_fct) #pour lancer la simulation. il faut mettre les fonctions en relation avec l'interface
+
+arret=tk.Button(root, text="stop", command=root.destroy) #arret total
+
+pause=tk.Button(root,text="pause") #mettre en pause
+
+save=tk.Button(root,text="save", command = save_fct)
+
+load=tk.Button(root,text="load", command = load_fct)
+
+ 
+
+#grid
+
+ 
+
+generation.grid(row=0,column=1)
+
+start.grid(row=1,column=1)
+
+save.grid(row=2,column=1)
+
+load.grid(row=3,column=1)
+
+arret.grid(row=4,column=1)
+
+canvas.grid(row=0,column=0,rowspan=6)
+
+ 
+
+#Boucle
+
+ 
+
+root.mainloop()
